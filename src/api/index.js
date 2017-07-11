@@ -1,6 +1,7 @@
 import { version } from '../../package.json';
 import { Router } from 'express';
 import facets from './facets';
+import images from './images.route.js'
 
 export default ({ config, db }) => {
 	let api = Router();
@@ -10,8 +11,11 @@ export default ({ config, db }) => {
 
 	// perhaps expose some API metadata at the root
 	api.get('/', (req, res) => {
-		res.json({ version });
+		// res.json({ version });
+		res.send('hello world');
 	});
+
+	images(api)
 
 	return api;
 }
