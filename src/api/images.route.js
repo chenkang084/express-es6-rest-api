@@ -1,22 +1,7 @@
 import fs from "fs";
+import path from "path";
 
-var mysql = require("mysql");
-var connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "root"
-});
-
-connection.connect(function(err) {
-  if (err) {
-    console.error('error connecting: ' + err.stack);
-    return;
-  }
-
-  console.log('connected as id ' + connection.threadId);
-});
-
-export default app => {
+export default (app, db) => {
   app.get("/download", (req, res) => {
     var img = fs.readFileSync("public/favicon.ico");
     res.writeHead(200, { "Content-Type": "image/gif" });
@@ -24,8 +9,18 @@ export default app => {
   });
 
   app.get("/test", (req, res) => {
-    var img = fs.readFileSync("public/test.js");
+    console.log(111);
+    var img = fs.readFileSync(path.resolve(__dirname, "../../public/test.js"));
     res.writeHead(200, { "Content-Type": "application/x-javascript" });
     res.end(img, "binary");
+  });
+
+  app.get("/db", (req, res) => {
+    db.query(
+      "SELECT * FROM game_usr_prfl WHERE NT_LOGIN = 'kanchen'",
+      (error, result, fields) => {
+          res.send(result);
+      }
+    );
   });
 };
