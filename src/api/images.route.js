@@ -16,9 +16,10 @@ export default (app, db) => {
   });
 
   app.get("/db", (req, res) => {
-      db.query("SELECT * FROM game_usr_prfl WHERE NT_LOGIN = ?", {NT_LOGIN: 'kanchen'}, function (error, results, fields) {
+      db.query("SELECT * FROM game_usr_prfl WHERE NT_LOGIN = ?", ['kanchen'], function (error, results, fields) {
           if (error) throw error;
-          console.log(results.insertId);
+          console.log('query ok');
+          // console.log(results);
       });
   });
 };

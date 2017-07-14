@@ -17,5 +17,8 @@ export default callback => {
       console.log("db connected!");
     });
 
+
+    console.log('db... ')
+
   callback(pool);
 };
