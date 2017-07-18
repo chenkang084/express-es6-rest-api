@@ -20,6 +20,7 @@ export default (app, db) => {
           if (error) throw error;
           console.log('query ok');
           // console.log(results);
+          res.send(results)
       });
   });
 };
