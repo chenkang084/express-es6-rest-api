@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+const user = require('../models/user').user;
 
 export default (app, db) => {
   app.get("/download", (req, res) => {
@@ -16,11 +17,23 @@ export default (app, db) => {
   });
 
   app.get("/db", (req, res) => {
-      db.query("SELECT * FROM game_usr_prfl WHERE NT_LOGIN = ?", ['kanchen'], function (error, results, fields) {
-          if (error) throw error;
-          console.log('query ok');
-          // console.log(results);
-          res.send(results)
-      });
+    db.mysql.query(
+      "SELECT * FROM game_usr_prfl WHERE NT_LOGIN = ?",
+      ["kanchen"],
+      function(error, results, fields) {
+        if (error) throw error;
+        console.log("query ok");
+        // console.log(results);
+        res.send(results);
+      }
+    );
+  });
+
+  app.get("/db2", (req, res) => {
+    user.find(function(err, result) {
+      if (err) return console.error(err);
+      // console.log(result);
+      res.send(result);
+    });
   });
 };

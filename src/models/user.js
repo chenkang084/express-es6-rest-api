@@ -1,24 +1,6 @@
-/**
- * Created by chenkang1 on 2017/7/18.
- */
-
-var mongoose = require("mongoose");
-var Schema = mongoose.Schema;
-
-mongoose.connect(
-  "mongodb://127.0.0.1/node_club_dev",
-  { server: { poolSize: 4 } },
-  function(err) {
-    if (err) {
-      logger.error("connect to %s error: ", config.db, err.message);
-      process.exit(1);
-    }
-
-    console.log("mongooDB connected!");
-  }
-);
-
-var UserSchema = new Schema({
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+let UserSchema = new Schema({
   name: { type: String },
   loginname: { type: String },
   pass: { type: String },
@@ -58,10 +40,4 @@ var UserSchema = new Schema({
   accessToken: { type: String }
 });
 
-let user = mongoose.model("User", UserSchema);
-
-// let user = mongoose.model("User");
-
-user.count({}, (err, result) => {
-  console.log(result);
-});
+exports.user = mongoose.model("User", UserSchema);
