@@ -1,67 +1,94 @@
-/**
- * Created by chenkang1 on 2017/7/18.
- */
+const fs = require("fs");
+const path = require("path");
 
-var mongoose = require("mongoose");
-var Schema = mongoose.Schema;
+var chokidar = require("chokidar");
 
-mongoose.connect(
-  "mongodb://127.0.0.1/node_club_dev",
-  { server: { poolSize: 4 } },
-  function(err) {
-    if (err) {
-      logger.error("connect to %s error: ", config.db, err.message);
-      process.exit(1);
-    }
-
-    console.log("mongooDB connected!");
-  }
-);
-
-var UserSchema = new Schema({
-  name: { type: String },
-  loginname: { type: String },
-  pass: { type: String },
-  email: { type: String },
-  url: { type: String },
-  profile_image_url: { type: String },
-  location: { type: String },
-  signature: { type: String },
-  profile: { type: String },
-  weibo: { type: String },
-  avatar: { type: String },
-  githubId: { type: String },
-  githubUsername: { type: String },
-  githubAccessToken: { type: String },
-  is_block: { type: Boolean, default: false },
-
-  score: { type: Number, default: 0 },
-  topic_count: { type: Number, default: 0 },
-  reply_count: { type: Number, default: 0 },
-  follower_count: { type: Number, default: 0 },
-  following_count: { type: Number, default: 0 },
-  collect_tag_count: { type: Number, default: 0 },
-  collect_topic_count: { type: Number, default: 0 },
-  create_at: { type: Date, default: Date.now },
-  update_at: { type: Date, default: Date.now },
-  is_star: { type: Boolean },
-  level: { type: String },
-  active: { type: Boolean, default: false },
-
-  receive_reply_mail: { type: Boolean, default: false },
-  receive_at_mail: { type: Boolean, default: false },
-  from_wp: { type: Boolean },
-
-  retrieve_time: { type: Number },
-  retrieve_key: { type: String },
-
-  accessToken: { type: String }
+let file = path.resolve("D", "/test/a.log");
+var watcher = chokidar.watch(file, {
+  ignored: /(^|[\/\\])\../,
+  persistent: true
 });
 
-let user = mongoose.model("User", UserSchema);
+var log = console.log.bind(console);
 
-// let user = mongoose.model("User");
+var express = require("express");
+var app = express();
+var server = require("http").createServer(app);
 
-user.count({}, (err, result) => {
-  console.log(result);
+var io = require("socket.io")(server);
+var port = process.env.PORT || 4000;
+
+server.listen(port, function() {
+  console.log("Server listening at port %d", port);
+});
+
+var numUsers = 0;
+
+io.on("connection", function(socket) {
+  var addedUser = false;
+
+  watcher
+    .on("add", path => log(`File ${path} has been added`))
+    .on("change", path => {
+      log(`File ${path} has been changed`);
+      socket.broadcast.emit("new message", {
+        username: socket.username,
+        message: 'log change'
+      });
+    })
+    .on("unlink", path => log(`File ${path} has been removed`));
+
+  // when the client emits 'new message', this listens and executes
+  socket.on("new message", function(data) {
+    // we tell the client to execute 'new message'
+    socket.broadcast.emit("new message", {
+      username: socket.username,
+      message: data
+    });
+  });
+
+  // when the client emits 'add user', this listens and executes
+  socket.on("add user", function(username) {
+    if (addedUser) return;
+
+    // we store the username in the socket session for this client
+    socket.username = username;
+    ++numUsers;
+    addedUser = true;
+    socket.emit("login", {
+      numUsers: numUsers
+    });
+    // echo globally (all clients) that a person has connected
+    socket.broadcast.emit("user joined", {
+      username: socket.username,
+      numUsers: numUsers
+    });
+  });
+
+  // when the client emits 'typing', we broadcast it to others
+  socket.on("typing", function() {
+    socket.broadcast.emit("typing", {
+      username: socket.username
+    });
+  });
+
+  // when the client emits 'stop typing', we broadcast it to others
+  socket.on("stop typing", function() {
+    socket.broadcast.emit("stop typing", {
+      username: socket.username
+    });
+  });
+
+  // when the user disconnects.. perform this
+  socket.on("disconnect", function() {
+    if (addedUser) {
+      --numUsers;
+
+      // echo globally that this client has left
+      socket.broadcast.emit("user left", {
+        username: socket.username,
+        numUsers: numUsers
+      });
+    }
+  });
 });
