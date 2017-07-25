@@ -10,7 +10,7 @@ const readLog = (file, callback) => {
     .createReadStream(file, {
       flags: "r",
       fd: null,
-      start: start
+      start: 0
     })
     .on("data", chunk => {
       callback(chunk);

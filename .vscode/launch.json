@@ -9,9 +9,9 @@
             "request": "launch",
             "name": "启动程序",
             "sourceMaps": true,
-            "program": "${workspaceRoot}/test2.js"
-            // "program": "${workspaceRoot}/src/index.js",
-            // "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/babel-node.cmd"
+            // "program": "${workspaceRoot}/src/rwModels/readAsync.js"
+            "program": "${workspaceRoot}/src/index.js",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/babel-node.cmd"
         }
     ]
 }

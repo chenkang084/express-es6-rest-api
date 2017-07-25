@@ -1,7 +1,7 @@
 import { version } from "../../package.json";
 import { Router } from "express";
 import facets from "./facets";
-import images from "./images.route.js";
+// import images from "./images.route.js";
 
 export default ({ config, db }) => {
   let api = Router();
@@ -15,7 +15,16 @@ export default ({ config, db }) => {
     res.send("hello world");
   });
 
-  images(api, db);
+  // images(api, db);
+
+  // require("./images.route").default(api, db);
+
+  require("fs")
+    .readdirSync(require("path").join(__dirname))
+    .forEach(function(file) {
+      let reg = new RegExp(/^.*\.[\w]+\.js$/, "igm");
+      reg.test(file) && require(`./${file}`).default(api, db);
+    });
 
   return api;
 };
