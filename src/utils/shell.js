@@ -4,8 +4,6 @@ process.stdout.setEncoding("utf8");
 
 export default function exceShell(cmd, cb) {
   shell.exec(cmd, (code, stdout, stderr) => {
-    if (!stderr) {
-      cb(code, stdout, stderr);
-    }
+    cb(code, stdout, stderr);
   });
 }
