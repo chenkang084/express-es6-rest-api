@@ -7,9 +7,14 @@ import initializeDb from "./db";
 import middleware from "./middleware";
 import api from "./api";
 import config from "./config.json";
+import path from "path";
 
 let app = express();
 app.server = http.createServer(app);
+
+// Routing
+// console.log(path.resolve('public'))
+app.use(express.static(path.resolve('public')));
 
 // logger
 app.use(morgan("dev"));
@@ -27,8 +32,8 @@ app.use(
   })
 );
 
-app.get("/", (req, res) => {
-  res.send("hello world");
+app.get("/test", (req, res) => {
+  res.send({"test":"hello world"});
 });
 
 // connect to db

@@ -1,16 +1,19 @@
 import fs from "fs";
 import path from "path";
-const user = require('../models/user').user;
+const user = require("../models/user").user;
 
 export default (app, db) => {
-  app.get("/download", (req, res) => {
+  app.get("/json", (req, res) => {
+    res.send({ name: "test" });
+  });
+
+  app.get("/image", (req, res) => {
     var img = fs.readFileSync("public/favicon.ico");
     res.writeHead(200, { "Content-Type": "image/gif" });
     res.end(img, "binary");
   });
 
-  app.get("/test", (req, res) => {
-    console.log(111);
+  app.get("/showFile", (req, res) => {
     var img = fs.readFileSync(path.resolve(__dirname, "../../public/test.js"));
     res.writeHead(200, { "Content-Type": "application/x-javascript" });
     res.end(img, "binary");
@@ -23,7 +26,6 @@ export default (app, db) => {
       function(error, results, fields) {
         if (error) throw error;
         console.log("query ok");
-        // console.log(results);
         res.send(results);
       }
     );
