@@ -1,34 +1,53 @@
 const fs = require("fs");
 const path = require("path");
-let file = path.resolve("D", "/test/a2.log");
-let file2 = path.resolve("D", "/test/a5.log");
+let file = path.resolve("D", "/test/a.log");
+// let file2 = path.resolve("D", "/test/a2.log");
+var chokidar = require("chokidar");
+var log = console.log.bind(console);
+let start = 0,
+  fileLength = 0,
+  BUFFER_SIZE = 521,
+  _fd;
 
-let readStream = fs.createReadStream(file, {
-  flags: "r",
-  defaultEncoding: "utf8",
-  autoClose: true,
-  start: 0
-});
+fs.open(file, "r", (err, fd) => {
+  _fd = fd;
+  fs.fstat(fd, (err, stats) => {
+    fileLength = stats.size;
 
-let count = 0;
+    console.log(fileLength);
 
-readStream.on("data", chunk => {
-  let flag = writeStream.write(chunk, function() {
-    console.log(count++);
+    start = fileLength;
+
+    readFile(_fd, () => {
+      // console.log(buf.toString());
+    });
   });
-
-  if (!flag) {
-    readStream.pause();
-  }
 });
 
-let writeStream = fs.createWriteStream(file2, {
-  flags: "w",
-  defaultEncoding: "utf8",
-  autoClose: true,
-  start: 0
+const readFile = (fd, cb) => {
+
+  fs.read(
+    fd,
+    new Buffer(BUFFER_SIZE),
+    0,
+    BUFFER_SIZE,
+    start,
+    (err, bytesRead, buf) => {
+      start += bytesRead;
+
+      cb(bytesRead, buf);
+    }
+  );
+};
+
+var watcher = chokidar.watch(file, {
+  ignored: /(^|[\/\\])\../,
+  persistent: true
 });
 
-writeStream.on("drain", () => {
-  readStream.resume();
+watcher.on("change", path => {
+  log(`File ${path} has been changed`);
+  readFile(_fd, (bytesRead,buf) => {
+    console.log(buf.slice(0,bytesRead).toString());
+  });
 });
