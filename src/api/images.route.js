@@ -1,10 +1,23 @@
 import fs from "fs";
 import path from "path";
 const user = require("../models/user").user;
+var multer = require("multer");
+var upload = multer();
 
 export default (app, db) => {
   app.get("/json", (req, res) => {
     res.send({ name: "test" });
+  });
+
+  app.post("/form", upload.array("file", 2), (req, res) => {
+    console.log("..........");
+    fs.writeFileSync(`./public/imgs/${req.files[0].originalname}`, req.files[0].buffer, {
+      flag: "w"
+    });
+    fs.writeFileSync(`./public/imgs/${req.files[1].originalname}`, req.files[1].buffer, {
+      flag: "w"
+    });
+    res.send("save ok");
   });
 
   app.get("/image", (req, res) => {
