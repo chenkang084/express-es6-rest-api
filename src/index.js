@@ -8,14 +8,16 @@ import middleware from "./middleware";
 import api from "./api";
 import config from "./config.json";
 import path from "path";
+// var busboy = require('connect-busboy'); //middleware for form/file upload
+// var fs = require('fs-extra');       //File System - for file manipulation
 
 let app = express();
 app.server = http.createServer(app);
 
 // Routing
 // console.log(path.resolve('public'))
-app.use(express.static(path.resolve('public')));
-
+app.use(express.static(path.resolve("public")));
+// app.use(busboy());
 // logger
 app.use(morgan("dev"));
 
@@ -32,8 +34,15 @@ app.use(
   })
 );
 
+app.use(
+  bodyParser.urlencoded({
+    // to support URL-encoded bodies
+    extended: true
+  })
+);
+
 app.get("/test", (req, res) => {
-  res.send({"test":"hello world"});
+  res.send({ test: "hello world" });
 });
 
 // connect to db
