@@ -9,16 +9,28 @@ export default (app, db) => {
     res.send({ name: "test" });
   });
 
-  app.post("/form", upload.array("file", 2), (req, res) => {
-    console.log("..........");
-    fs.writeFileSync(`./public/imgs/${req.files[0].originalname}`, req.files[0].buffer, {
-      flag: "w"
-    });
-    fs.writeFileSync(`./public/imgs/${req.files[1].originalname}`, req.files[1].buffer, {
-      flag: "w"
-    });
-    res.send("save ok");
-  });
+  app.post(
+    "/form",
+    upload.fields([
+      { name: "configuration", maxCount: 1 },
+      { name: "keyring", maxCount: 1 }
+    ]),
+    (req, res) => {
+      // app.post("/form", upload.array("configuration", 1), (req, res) => {
+      console.log("..........");
+      fs.writeFileSync(
+        `./public/imgs/${req.files[0].originalname}`,
+        req.files[0].buffer,
+        {
+          flag: "w"
+        }
+      );
+      // fs.writeFileSync(`./public/imgs/${req.files[1].originalname}`, req.files[1].buffer, {
+      //   flag: "w"
+      // });
+      res.send("save ok");
+    }
+  );
 
   app.get("/image", (req, res) => {
     var img = fs.readFileSync("public/favicon.ico");
