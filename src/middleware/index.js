@@ -1,10 +1,11 @@
 import { Router } from 'express';
 
 export default ({ config, db }) => {
-	let routes = Router();
+  const routes = Router();
 
-	// add middleware here
-	console.log('middleware ')
+  // add middleware here
+  console.log('middleware ');
+  console.log(config, db);
 
-	return routes;
-}
+  return routes;
+};

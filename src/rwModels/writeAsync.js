@@ -1,15 +1,17 @@
-const fs = require("fs");
-const path = require("path");
-let file = path.resolve("D", "/test/a.log");
-let file2 = path.resolve("D", "/test/a2.log");
+const fs = require('fs');
+const path = require('path');
+
+const file = path.resolve('D', '/test/a.log');
+// const file2 = path.resolve('D', '/test/a2.log');
 
 // fs.readFile(file2, (err, data) => {
 //   console.log(data.length);
 // });
 
-fs.open(file, "r", (err, fd) => {
-  let buf = new Buffer(1024);
-  fs.read(fd, buf, 0, 1024, 0, (err, bytesRead, buf2) => {
+fs.open(file, 'r', (err, fd) => {
+  const buf = new Buffer(1024);
+  fs.read(fd, buf, 0, 1024, 0, (_err, bytesRead, buf2) => {
+    if (_err) console.log(_err);
     console.log(buf2.slice(0, bytesRead).toString());
   });
 });
@@ -29,5 +31,3 @@ fs.open(file, "r", (err, fd) => {
 //     });
 //   });
 // });
-
-

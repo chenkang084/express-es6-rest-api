@@ -1,8 +1,9 @@
-const fs = require("fs");
-const path = require("path");
-const chokidar = require("chokidar");
-var log = console.log.bind(console);
-let file = path.resolve("D", "/test/a.log");
+const fs = require('fs');
+const path = require('path');
+const chokidar = require('chokidar');
+
+const log = console.log.bind(console);
+const file = path.resolve('D', '/test/a.log');
 let position = 0;
 const CHUNK_SIZE = 16 * 1024;
 let _fd;
@@ -11,7 +12,7 @@ function tailf(filename, delay) {
   // 每次读取文件块大小，16K
   const CHUNK_SIZE = 16 * 1024;
   // 打开文件，获取文件句柄
-  const fd = fs.openSync(filename, "r");
+  const fd = fs.openSync(filename, 'r');
   // 文件开始位置
   //   let position = 0;
   // 循环读取
@@ -25,7 +26,7 @@ function tailf(filename, delay) {
     if (bytesRead < CHUNK_SIZE) {
       // 如果当前已到达文件末尾，则先等待一段时间再继续
       //   setTimeout(loop, delay);
-      return;
+
     } else {
       loop();
     }
@@ -35,7 +36,7 @@ function tailf(filename, delay) {
 
 const loopFile = (onError, onData) => {
   const buf = new Buffer(CHUNK_SIZE);
-  const fd = fs.openSync(file, "rs+");
+  const fd = fs.openSync(file, 'rs+');
   const bytesRead = fs.readSync(fd, buf, 0, CHUNK_SIZE, position);
   // 实际读取的内容长度以 bytesRead 为准，并且更新 position 位置
   position += bytesRead;
@@ -45,25 +46,23 @@ const loopFile = (onError, onData) => {
     // 如果当前已到达文件末尾，则先等待一段时间再继续
     //   setTimeout(loop, delay);
     // console.log('loop finished')
-    return;
+
   } else {
     loopFile();
   }
-
-  
 };
 
 tailf(file, 100);
-var watcher = chokidar.watch(file, {
+const watcher = chokidar.watch(file, {
   ignored: /(^|[\/\\])\../,
   persistent: true
 });
 
-watcher.on("change", path => {
+watcher.on('change', (path) => {
   log(`File ${path} has been changed`);
   loopFile(
     () => {},
-    data => {
+    (data) => {
       process.stdout.write(data);
     }
   );

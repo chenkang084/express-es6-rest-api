@@ -8,7 +8,9 @@
     "build": "babel src -s -D -d dist --presets es2015,stage-0",
     "start": "node dist",
     "prestart": "npm run -s build",
-    "test": "eslint src"
+    "test": "eslint src",
+    "lint": "eslint --fix --ext .js src",
+    "precommit": "npm run lint"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
@@ -52,6 +54,10 @@
     "babel-preset-stage-0": "^6.5.0",
     "chokidar": "^1.7.0",
     "eslint": "^3.1.1",
+    "eslint-config-airbnb": "^15.1.0",
+    "eslint-config-airbnb-base": "^11.3.1",
+    "eslint-plugin-import": "^2.7.0",
+    "husky": "^0.14.3",
     "iconv-lite": "^0.4.18",
     "nodemon": "^1.9.2",
     "socket.io": "^2.0.3"

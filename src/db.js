@@ -1,8 +1,8 @@
-const Sequelize = require("sequelize");
-const mongoose = require("mongoose");
-const mysql = require("mysql");
+// const Sequelize = require('sequelize');
+// const mongoose = require('mongoose');
+// const mysql = require('mysql');
 
-export default callback => {
+export default (callback) => {
   // connect to a database if needed, then pass it to `callback`:
   // let _mysql = mysql.createPool({
   //   host: "localhost",
@@ -32,13 +32,13 @@ export default callback => {
   //   }
   // );
 
-  
+
   // let db = {
   //   mysql: _mysql || {},
   //   mongoose
   // };
 
-  let db = {}
+  const db = {};
 
   callback(db);
 };

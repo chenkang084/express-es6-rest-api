@@ -1,14 +1,15 @@
-const fs = require("fs");
-const path = require("path");
-const chokidar = require("chokidar");
-var log = console.log.bind(console);
-let file = path.resolve("D", "/test/a.log");
+const fs = require('fs');
+const path = require('path');
+const chokidar = require('chokidar');
+
+const log = console.log.bind(console);
+const file = path.resolve('D', '/test/a.log');
 let position = 0;
 const CHUNK_SIZE = 16 * 1024;
 let _fd;
 
 function tailf(filename, delay, onError, onData) {
-  fs.open(filename, "r", function(err, fd) {
+  fs.open(filename, 'r', (err, fd) => {
     if (err) return onError(err);
 
     _fd = fd;
@@ -27,7 +28,7 @@ function tailf(filename, delay, onError, onData) {
           onData(buf.slice(0, bytesRead));
 
           if (bytesRead < CHUNK_SIZE) {
-            return;
+
             // setTimeout(loop, delay);
           } else {
             loop();
@@ -44,13 +45,13 @@ const loopFile = (onError, onData) => {
   fs.read(_fd, buf, 0, CHUNK_SIZE, position, (err, bytesRead, buf) => {
     if (err) return onError(err);
 
-    console.log(`before position=${position}`)
+    console.log(`before position=${position}`);
     position += bytesRead;
-    console.log(`after position=${position}`)
+    console.log(`after position=${position}`);
     onData(buf.slice(0, bytesRead));
 
     if (bytesRead < CHUNK_SIZE) {
-      return;
+
       // setTimeout(loop, delay);
     } else {
       loopFile();
@@ -62,17 +63,17 @@ tailf(
   file,
   100,
   () => {},
-  data => {
+  (data) => {
     process.stdout.write(data);
   }
 );
 
-var watcher = chokidar.watch(file, {
+const watcher = chokidar.watch(file, {
   ignored: /(^|[\/\\])\../,
   persistent: true
 });
 
-watcher.on("change", path => {
+watcher.on('change', (path) => {
   log(`File ${path} has been changed`);
   // tailf(
   //   file,
@@ -84,7 +85,7 @@ watcher.on("change", path => {
   // );
   loopFile(
     () => {},
-    data => {
+    (data) => {
       process.stdout.write(data);
     }
   );
