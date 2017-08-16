@@ -1,4 +1,4 @@
-var shell = require("shelljs");
+const shell = require('shelljs');
 
 export default function exceShell(cmd, cb) {
   shell.exec(cmd, (code, stdout, stderr) => {

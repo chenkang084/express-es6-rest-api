@@ -8,8 +8,8 @@ import middleware from "./middleware";
 import api from "./api";
 import config from "./config.json";
 import path from "path";
-// var busboy = require('connect-busboy'); //middleware for form/file upload
-// var fs = require('fs-extra');       //File System - for file manipulation
+import session from "express-session";
+var RedisStore = require('connect-redis')(session);
 
 let app = express();
 app.server = http.createServer(app);
@@ -17,7 +17,6 @@ app.server = http.createServer(app);
 // Routing
 // console.log(path.resolve('public'))
 app.use(express.static(path.resolve("public")));
-// app.use(busboy());
 // logger
 app.use(morgan("dev"));
 
@@ -41,7 +40,26 @@ app.use(
   })
 );
 
+app.use(
+  session({
+    secret: "test",
+    store: new RedisStore({
+      port: 6379,
+      host: '127.0.0.1',
+      db: 0,
+      pass: '',
+      ttl: 30
+    }),
+    resave: false,
+    saveUninitialized: false
+  })
+);
+
 app.get("/test", (req, res) => {
+
+  req.session.user = {
+    name:'jack'
+  }
   res.send({ test: "hello world" });
 });
 
