@@ -1,7 +1,7 @@
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-let file = path.resolve("D", "/test/a5.log");
+const file = path.resolve('D', '/test/a5.log');
 
 // fs.open(file,'w',0o666,(err,fd)=>{
 //     console.log('ok')
@@ -20,6 +20,7 @@ let file = path.resolve("D", "/test/a5.log");
 
 // write.end();
 
-fs.writeFile(file,'abc',0,'utf8',(err)=>{
-    console.log('ok')
-})
+fs.writeFile(file, 'abc', 0, 'utf8', (err) => {
+  if (err) console.log(err);
+  console.log('ok');
+});
